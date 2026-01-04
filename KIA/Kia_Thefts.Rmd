@@ -1,0 +1,791 @@
+---
+title: "DSC640 Kia Thefts"
+output:
+  html_document: default
+  pdf_document: default
+date: "2026-01-03"
+---
+#Graphs I have to use for this assignment 
+#Pie Charts
+#Donut Charts
+#Stacked Bars with Categorical Data
+#Tree Map
+#Area Chart
+#Stacked Area Chart
+
+```{r}
+knitr::purl("Kia Thefts.Rmd", output = ""Kia_thefts.Rmd".R")
+
+
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Import data 
+
+
+```{r}
+library(readxl)
+setwd("C:/Users/samkl/Week 5-6"
+)
+getwd()
+list.files()
+Milwaukee <- read.csv("KiaHyundaiMilwaukeeData.csv")
+OtherCities <- read.csv("kiaHyundaiThefts.csv")
+Theft_Map <- read.csv("carTheftsMap.csv")
+News_Data <-read_excel(
+  "Motherboard VICE News Kia Hyundai Theft Data.xlsx",
+  col_names = FALSE
+)
+```
+
+## Append Milwaukee with the other City file to make one file 
+
+```{r}
+Theft_by_city <- rbind(Milwaukee, OtherCities)
+
+Theft_Map <- read.csv("carTheftsMap.csv")
+News_Data <-read_excel(
+  "Motherboard VICE News Kia Hyundai Theft Data.xlsx",
+  col_names = FALSE
+)
+```
+
+
+## Clean up the News_Data XLX
+```{r}
+library(dplyr)
+library(tidyr)
+library(readr)
+library(zoo)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# ---- 0) Make News_Data a plain data.frame of characters (prevents tibble row-assign headaches) ----
+News_Data <- as.data.frame(lapply(News_Data, as.character), stringsAsFactors = FALSE)
+
+stopifnot(nrow(News_Data) >= 2)
+
+# ---- 1) Build a cleaned "first header row" (fill-down) from News_Data[1, ] ----
+first_row <- as.character(unlist(News_Data[1, ], use.names = FALSE))
+
+# fill-down blanks/NA
+first_row[first_row == ""] <- NA
+for (i in seq_along(first_row)) {
+  if (is.na(first_row[i]) && i > 1) first_row[i] <- first_row[i - 1]
+}
+
+# force first column name
+first_row[1] <- "Date"
+
+# ---- 2) Combine row 1 + row 2 into column names ----
+second_row <- as.character(unlist(News_Data[2, ], use.names = FALSE))
+
+new_names <- paste(first_row, second_row, sep = "__")
+new_names[1] <- "Date"
+new_names <- make.unique(new_names)
+
+colnames(News_Data) <- new_names
+
+# ---- 3) Drop the two header rows ----
+News_Data <- News_Data[-c(1, 2), , drop = FALSE]
+
+# ---- 4) Unpivot then repivot to final dataset ----
+long_data <- pivot_longer(
+  News_Data,
+  cols = -Date,
+  names_to = c("City", "Metric"),
+  names_sep = "__",
+  values_to = "Value"
+)
+
+News_Data_Final <- pivot_wider(
+  long_data,
+  names_from = Metric,
+  values_from = Value
+)
+
+# ---- 5) Fix Date + Year (now that News_Data_Final exists) ----
+News_Data_Final$Date <- as.Date(News_Data_Final$Date)
+News_Data_Final$Year <- format(News_Data_Final$Date, "%Y")
+
+# ---- 6) Split City into City / State ----
+News_Data_Final <- News_Data_Final %>%
+  separate(
+    City,
+    into = c("City", "State"),
+    sep = ",\\s*",
+    fill = "right",
+    remove = TRUE
+  )
+
+# sanity checks
+str(News_Data_Final$Date)
+unique(News_Data_Final$City)
+
+#Calculate Percent of Kia in News data
+
+# Force numeric (remove commas just in case)
+News_Data_Final$`Kia/Hyundais` <- as.numeric(
+  gsub(",", "", News_Data_Final$`Kia/Hyundais`)
+)
+
+News_Data_Final$All <- as.numeric(
+  gsub(",", "", News_Data_Final$All)
+)
+News_Data_Final$`Kia Share` <- ifelse(
+  News_Data_Final$All == 0,
+  NA,
+  (News_Data_Final$`Kia/Hyundais` / News_Data_Final$All) * 100
+)
+
+#Groupby to graph theft by city as reported on news 
+
+city_summary_news <- News_Data_Final %>%
+  group_by(City) %>%
+  summarise(
+    Kias_Stolen = sum(`Kia/Hyundais`, na.rm = TRUE),
+    Count = n(),
+    .groups = "drop"
+  )
+
+#Groupby to graph theft by city  
+
+city_summary <- Theft_by_city %>%
+  group_by(city) %>%
+  summarise(
+    countKiaHyundaiThefts = sum(countKiaHyundaiThefts, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+```
+
+##Create TOtal Thefts in Theft by City 
+```{r}
+Theft_by_city$Total_Thefts <- 
+  Theft_by_city$countKiaHyundaiThefts + Theft_by_city$countOtherThefts
+
+#Calculate Percent of Kia in Theft by City
+Theft_by_city$Kia_Share <- ifelse(
+  Theft_by_city$Total_Thefts == 0,
+  NA,
+  (Theft_by_city$countKiaHyundaiThefts / Theft_by_city$Total_Thefts) * 100
+)
+
+
+```
+
+##Look at Value in News Data 
+
+```{r}
+
+#Look at the values in News_data
+
+str(News_Data_Final$`Kia/Hyundais`)
+
+News_Data_Final$`Kia/Hyundais` <-
+  as.numeric(gsub(",", "", News_Data_Final$`Kia/Hyundais`))
+
+News_Data_Final$All <-
+  as.numeric(gsub(",", "", News_Data_Final$All))
+
+
+```
+
+##Barplot of Total Thefts By City from News Data
+
+```{r}
+bar_kia_hyundai_by_city <- 
+barplot(
+  height = News_Data_Final$`Kia/Hyundais`,
+  names.arg = News_Data_Final$City,
+  las = 2,              # rotate labels
+  cex.names = 0.6,      # make labels smaller
+  main = "Total Kia/Hyundai Thefts by City",
+  ylab = "Number of Thefts"
+)
+
+bar_totalthefts_by_city <-
+barplot(
+  height = News_Data_Final$All,
+  names.arg = News_Data_Final$City,
+  las = 2,              # rotate labels
+  cex.names = 0.6,      # make labels smaller
+  main = "Total Thefts by City",
+  ylab = "Number of Thefts"
+)
+```
+
+##Bargraph Graph Top 10 Cities as reported  by news
+
+```{r}
+#graph top ten cities 
+top10_cities_news <- city_summary_news %>%
+  arrange(desc(Kias_Stolen)) %>%
+  slice_head(n = 10)
+
+library(ggplot2)
+
+Top_ten_cities_bargraph <-
+ggplot(top10_cities_news, aes(x = reorder(City, Kias_Stolen), y = Kias_Stolen)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  theme_minimal() +
+  labs(
+    title = "Top Ten Cities with Kia's/Hyundais Stolen as Reported on News",
+    x = "City",
+    y = "Total Kia/Hyundais"
+  )
+
+Top_ten_cities_bargraph
+```
+
+```{r}
+#graph top ten cities from Theft_city_Data
+top10_cities <- city_summary %>%
+  arrange(desc(countKiaHyundaiThefts)) %>%
+  slice_head(n = 10)
+
+library(ggplot2)
+
+top10_cities_kias_Chartdata <-
+ggplot(top10_cities, aes(x = reorder(city, countKiaHyundaiThefts), y = countKiaHyundaiThefts)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  theme_minimal() +
+  labs(
+    title = "Top Ten Cities with Kia's/Hyundais Stolen on Chart",
+    x = "City",
+    y = "Total Kia/Hyundais Stolen"
+  )
+
+top10_cities_kias_Chartdata
+```
+
+##Pie Chart
+
+```{r}
+#Pie Chart of Kia Thefts vs All Thefts (using Theft by City Data)
+
+# Aggregate totals across the dataset
+kia_total <- sum(Theft_by_city$countKiaHyundaiThefts, na.rm = TRUE)
+other_total <- sum(Theft_by_city$countOtherThefts, na.rm = TRUE)
+
+# Create vector for pie chart
+theft_counts <- c(
+  "Kia / Hyundai Theft" = kia_total,
+  "All Other Vehicles" = other_total
+)
+
+# Pie chart
+kia_alltheft_piechart<-
+pie(
+  theft_counts,
+  main = "Kia & Hyundai's Theft's Are Prevalant",
+  col = c("steelblue", "gray70")
+)
+```
+
+##Monthly Vehicle Theft by Type (stacked bar graph)
+```{r}
+
+# Create a proper Date from year + month
+# Create a proper Date from year + month
+Theft_by_city$Date <- as.Date(
+  paste(Theft_by_city$year, Theft_by_city$month, "01"),
+  format = "%Y %b %d"
+)
+
+Theft_by_city$Date <- as.Date(Theft_by_city$Date)
+
+# Create Month factor
+Theft_by_city$Month <- factor(
+  format(Theft_by_city$Date, "%B"),
+  levels = month.name
+)
+
+# Aggregate by Month
+monthly_type <- aggregate(
+  cbind(countKiaHyundaiThefts, countOtherThefts) ~ Month,
+  data = Theft_by_city,
+  sum,
+  na.rm = TRUE
+)
+
+# ---- GRAPHICS SETTINGS (THIS IS THE KEY FIX) ----
+op <- par(no.readonly = TRUE)
+
+# Increase right margin significantly
+par(
+  mar = c(5, 4, 4, 8),  # bottom, left, top, RIGHT
+  xpd = NA              # allow drawing outside plot region
+)
+
+# Plot stacked bar chart
+barplot(
+  t(as.matrix(monthly_type[, -1])),
+  names.arg = monthly_type$Month,
+  las = 2,
+  col = c("steelblue", "gray70"),
+  main = "Increase Prevention Efforts Before the Year-End Theft Surge",
+  ylab = "Qty of Cars"
+)
+
+# Legend — now guaranteed visible
+legend(
+  "topright",
+  inset = c(-0.25, 0),
+  legend = c("Kia / Hyundai", "Other Vehicles"),
+  fill = c("steelblue", "gray70"),
+  bty = "n",
+  cex = 0.9
+)
+
+# Reset graphics parameters
+par(op)
+
+
+```
+
+##Tree Map 
+
+```{r}
+#reshape theft map data
+
+library(tidyr)
+
+Theft_Map_long <- pivot_longer(
+  Theft_Map,
+  cols = starts_with("countCarThefts"),
+  names_to = "Year",
+  values_to = "Thefts"
+)
+
+Theft_Map_long$Thefts <- as.numeric(gsub(",", "", Theft_Map_long$Thefts))
+
+Theft_Map_long$Thefts <- as.numeric(
+  gsub("[^0-9.]", "", Theft_Map_long$Thefts)
+)
+
+# Clean up Year
+Theft_Map_long$Year <- gsub("countCarThefts", "", Theft_Map_long$Year)
+Theft_Map_long$Year <- as.integer(Theft_Map_long$Year)
+
+names(Theft_Map_long)
+
+# 1) Aggregate total thefts by agency
+agency_totals <- aggregate(
+  Thefts ~ geo_name,
+  data = Theft_Map_long,
+  sum,
+  na.rm = TRUE
+)
+
+# 2) Keep top 15 agencies (treemap gets unreadable otherwise)
+agency_totals <- agency_totals[order(-agency_totals$Thefts), ]
+top_agencies <- head(agency_totals, 15)
+
+library(RColorBrewer)
+library(viridis)
+
+city_palette <- colorRampPalette(
+  c("#f7fbff", "#2171b5")   # lighter dark-end so text stays black
+)(nrow(top_agencies))
+
+# 3) Treemap
+library(treemap)
+
+Busy_PD_Treemap<-
+treemap(
+  top_agencies,
+  index = "geo_name",
+  vSize = "Thefts",
+  palette = city_palette,
+  fontcolor = "black",
+  title = "Total 15 Busiest Police Departments Handling Thefts"
+)
+```
+
+##Stacked Area Graph
+
+```{r}
+#look for trends by year & city (using News_data)
+# 1) Create numeric Year
+News_Data_Final$Year <- as.integer(format(News_Data_Final$Date, "%Y"))
+
+# 2) Aggregate thefts by Year + City
+year_city <- aggregate(
+  All ~ Year + City,
+  data = News_Data_Final,
+  sum,
+  na.rm = TRUE
+)
+
+# 3) Find top 10 cities overall
+city_totals <- aggregate(All ~ City, data = year_city, sum, na.rm = TRUE)
+top_cities <- head(city_totals[order(-city_totals$All), "City"], 10)
+
+# 4) Filter to top cities and reshape wide
+library(tidyr)
+
+year_city_top <- year_city[year_city$City %in% top_cities, ]
+
+year_city_wide <- pivot_wider(
+  year_city_top,
+  names_from = City,
+  values_from = All,
+  values_fill = 0
+)
+
+year_city_wide <- year_city_wide[order(year_city_wide$Year), ]
+
+# 5) Plot stacked area (base R) with DISTINCT colors
+theft_matrix <- as.matrix(year_city_wide[, -1])
+years <- year_city_wide$Year
+
+library(RColorBrewer)
+
+# ✅ High-contrast categorical colors (10 cities)
+colors <- brewer.pal(ncol(theft_matrix), "Paired")
+
+cumulative <- rep(0, nrow(theft_matrix))
+
+plot(
+  years,
+  rowSums(theft_matrix),
+  type = "n",
+  xlab = "Year",
+  ylab = "",
+  main = "Car Theft Trends in the Top 10 Cities"
+)
+
+for (i in seq_len(ncol(theft_matrix))) {
+  polygon(
+    c(years, rev(years)),
+    c(cumulative + theft_matrix[, i], rev(cumulative)),
+    col = adjustcolor(colors[i], alpha.f = 0.85),
+    border = "white",
+    lwd = 0.6
+  )
+  cumulative <- cumulative + theft_matrix[, i]
+}
+
+legend(
+  "topleft",
+  legend = colnames(theft_matrix),
+  fill = colors,
+  cex = 0.75,
+  bty = "n"
+)
+
+```
+Stacked Area Bar of KIA vs ALL 
+
+```{r}
+
+# --- Stacked area: Kia/Hyundai vs All Other (News data) ---
+
+library(dplyr)
+
+# 1) Ensure Year exists
+News_Data_Final$Year <- as.integer(format(News_Data_Final$Date, "%Y"))
+
+# 2) Make sure the columns are numeric (handles commas)
+News_Data_Final$`Kia/Hyundais` <- as.numeric(gsub(",", "", News_Data_Final$`Kia/Hyundais`))
+News_Data_Final$All <- as.numeric(gsub(",", "", News_Data_Final$All))
+
+# 3) Aggregate totals by Year (across all cities)
+year_totals <- News_Data_Final %>%
+  group_by(Year) %>%
+  summarise(
+    KiaHyundai = sum(`Kia/Hyundais`, na.rm = TRUE),
+    AllThefts  = sum(All, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    OtherVehicles = pmax(AllThefts - KiaHyundai, 0)  # avoid negatives if any data weirdness
+  ) %>%
+  arrange(Year)
+
+# 4) Build matrix for stacked area
+years <- year_totals$Year
+theft_matrix <- as.matrix(year_totals[, c("KiaHyundai", "OtherVehicles")])
+
+# 5) Plot (2 clean, high-contrast colors)
+colors <- c("steelblue", "grey")
+
+cumulative <- rep(0, nrow(theft_matrix))
+
+plot(
+  years,
+  rowSums(theft_matrix),
+  type = "n",
+  xlab = "Year",
+  ylab = "Number of Thefts",
+  main = "Vehicle Theft Trends"
+)
+
+for (i in seq_len(ncol(theft_matrix))) {
+  polygon(
+    c(years, rev(years)),
+    c(cumulative + theft_matrix[, i], rev(cumulative)),
+    col = adjustcolor(colors[i], alpha.f = 0.85),
+    border = "white",
+    lwd = 0.8
+  )
+  cumulative <- cumulative + theft_matrix[, i]
+}
+
+legend(
+  "topleft",
+  legend = c("Kia / Hyundai", "All Other Vehicles"),
+  fill = colors,
+  cex = 0.9,
+  bty = "n"
+)
+```
+
+Compare Top agencies
+```{r}
+#print top agencies to ensure they are the same color as my stacked area graph 
+top_agencies
+
+top_cities
+
+```
+
+
+
+##Physical Map of US and Theft Rates 
+```{r}
+library(ggplot2)
+library(maps)
+
+library(ggplot2)
+library(maps)
+
+# Ensure numeric
+Theft_Map$longitude <- as.numeric(Theft_Map$longitude)
+Theft_Map$latitude  <- as.numeric(Theft_Map$latitude)
+Theft_Map$countCarThefts2022 <- as.numeric(Theft_Map$countCarThefts2022)
+
+Theft_Map <- Theft_Map[
+  !is.na(Theft_Map$longitude) &
+  !is.na(Theft_Map$latitude) &
+  !is.na(Theft_Map$countCarThefts2022),
+]
+
+# Remove Hawaii / zoom to lower 48
+Theft_Map <- Theft_Map[
+  Theft_Map$longitude > -130 & Theft_Map$longitude < -60 &
+  Theft_Map$latitude  > 24   & Theft_Map$latitude  < 50,
+]
+
+us_map <- map_data("state")
+
+ggplot() +
+  geom_polygon(
+    data = us_map,
+    aes(long, lat, group = group),
+    fill = "gray70",
+    color = "gray40",
+    linewidth = 0.2
+  ) +
+  geom_point(
+    data = Theft_Map,
+    aes(
+      x = longitude,
+      y = latitude,
+      size = countCarThefts2022
+    ),
+    color = "red3",
+    alpha = 0.75
+  ) +
+  scale_size_continuous(range = c(3, 14)) +
+  coord_quickmap() +
+  labs(
+    title = "Car Thefts in 2022 by Location",
+    size = "Number of Car Thefts"
+  ) +
+  theme_minimal() +
+  theme(
+axis.title = element_blank(),   # remove x/y titles
+axis.text  = element_blank(),   # remove x/y numbers
+axis.ticks = element_blank(),   # remove tick marks
+    panel.grid = element_blank(),
+    panel.background = element_rect(fill = "white"),
+    plot.title = element_text(face = "bold")
+  )
+
+
+```
+
+```{r}
+library(ggplot2)
+library(maps)
+
+
+# Ensure numeric
+Theft_Map$longitude <- as.numeric(Theft_Map$longitude)
+Theft_Map$latitude  <- as.numeric(Theft_Map$latitude)
+Theft_Map$percentChange2019to2022 <- as.numeric(Theft_Map$percentChange2019to2022)
+
+# Remove missing values
+Theft_Map <- Theft_Map[
+  !is.na(Theft_Map$longitude) &
+  !is.na(Theft_Map$latitude) &
+  !is.na(Theft_Map$percentChange2019to2022),
+]
+
+# Zoom to lower 48 (removes HI / AK)
+Theft_Map <- Theft_Map[
+  Theft_Map$longitude > -130 & Theft_Map$longitude < -60 &
+  Theft_Map$latitude  > 24   & Theft_Map$latitude  < 50,
+]
+
+# Map background
+us_map <- map_data("state")
+
+# Plot
+ggplot() +
+  geom_polygon(
+    data = us_map,
+    aes(long, lat, group = group),
+    fill = "gray70",
+    color = "gray40",
+    linewidth = 0.2
+  ) +
+  geom_point(
+    data = Theft_Map,
+    aes(
+      x = longitude,
+      y = latitude,
+      size = abs(percentChange2019to2022),
+      color = percentChange2019to2022
+    ),
+    alpha = 0.8
+  ) +
+  scale_size_continuous(range = c(3, 14)) +
+  scale_color_gradient2(
+    low = "steelblue",
+    mid = "white",
+    high = "red3",
+    midpoint = 0,
+    name = "",
+    breaks = c(
+      min(Theft_Map$percentChange2019to2022, na.rm = TRUE),
+      max(Theft_Map$percentChange2019to2022, na.rm = TRUE)
+    ),
+    labels = c("−", "+")
+  ) +
+  coord_quickmap() +
+  labs(
+    title = "Rates of Theft Are Increasing Faster in the East than the West"
+  ) +
+  guides(size = "none") +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    axis.text  = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold"),
+    legend.position = c(0.89, 0.12),
+    legend.text = element_text(size = 14),
+    legend.justification = c("left", "bottom")
+  )
+
+
+```
+
+Line Graph of not sure what yet
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Ensure Date is Date type
+Theft_by_city$Date <- as.Date(Theft_by_city$Date)
+
+# Aggregate totals by Date
+theft_time_series <- Theft_by_city %>%
+  group_by(Date) %>%
+  summarise(
+    KiaHyundai = sum(countKiaHyundaiThefts, na.rm = TRUE),
+    OtherVehicles = sum(countOtherThefts, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Plot line graph
+ggplot(theft_time_series, aes(x = Date)) +
+  geom_line(aes(y = KiaHyundai, color = "Kia / Hyundai"), linewidth = 1.2) +
+  geom_line(aes(y = OtherVehicles, color = "Other Vehicles"), linewidth = 1.2) +
+  scale_color_manual(
+    values = c(
+      "Kia / Hyundai" = "steelblue",
+      "Other Vehicles" = "gray60"
+    )
+  ) +
+  labs(
+    title = "Vehicle Theft Trends Over Time",
+    y = "Number of Thefts",
+    color = "Vehicle Type"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "top"
+  )
+```
+
+Which Cities increased the most? 
+
+```{r}
+
+library(dplyr)
+library(ggplot2)
+
+# Ensure Date is Date type
+Theft_by_city$Date <- as.Date(Theft_by_city$Date)
+
+# Create Year
+Theft_by_city$Year <- as.integer(format(Theft_by_city$Date, "%Y"))
+
+# Aggregate Kia thefts by City + Year
+city_year_kia <- Theft_by_city %>%
+  group_by(city, Year) %>%
+  summarise(
+    KiaThefts = sum(countKiaHyundaiThefts, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Calculate change (last year - first year) for each city
+city_change <- city_year_kia %>%
+  group_by(city) %>%
+  summarise(
+    Kia_Change = KiaThefts[Year == max(Year)] - KiaThefts[Year == min(Year)],
+    .groups = "drop"
+  ) %>%
+  filter(Kia_Change > 0) %>%           # keep only increases
+  arrange(desc(Kia_Change)) %>%
+  slice_head(n = 10)
+
+# Plot
+ggplot(city_change, aes(x = reorder(city, Kia_Change), y = Kia_Change)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Cities with the Largest Increase in Kia/Hyundai Thefts",
+    x = "",
+    y = "Increase in Kia/Hyundai Thefts"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold")
+  )
+```
+
