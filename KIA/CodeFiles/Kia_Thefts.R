@@ -743,3 +743,4 @@ ggplot(city_change, aes(x = reorder(city, Kia_Change), y = Kia_Change)) +
     plot.title = element_text(face = "bold")
   )
 
+
