@@ -1,6 +1,6 @@
 # Alberta Wildfire Status & Burn Rate Analysis
 
-This repository contains data, Python analysis, and presentation materials used to examine the development of **wildfire status** and **burn rates** in the province of **Alberta**.  
+This repository contains data, Python analysis, and presentation materials used to examine the development of wildfire status and burn rates in the province of Alberta.  
 The project focuses on identifying patterns and trends in wildfire activity using historical data, with outputs designed for both analytical and non-technical review.
 
 ---
@@ -23,12 +23,12 @@ The project focuses on identifying patterns and trends in wildfire activity usin
 ## Project Overview
 
 This project examines:
-- Changes in wildfire **status** over time
-- Trends in wildfire **burn rates**
+- Changes in wildfire status over time
+- Trends in wildfire burn rates
 - Historical wildfire patterns across Alberta
 
-The analysis was completed in **Python** using a Jupyter Notebook.  
-A cleaned dataset was also created to allow users to easily explore the data in **Excel** without running code.
+The analysis was completed in Python using a Jupyter Notebook.  
+A cleaned dataset was also created to allow users to easily explore the data in Excel without running code.
 
 ---
 
