@@ -5,21 +5,6 @@ The project focuses on identifying patterns and trends in wildfire activity usin
 
 ---
 
-## Repository Structure
-
-├── CodeFiles/
-│ └── Alberta_Wildfire.ipynb
-├── Data/
-│ ├── FireData_CLEAN.xlsx
-│ ├── fp-historical-wildfire-data-2000-*.csv
-│ └── fp-historical-wildfire-data-dictionary.xlsx
-├── Presentation/
-│ └── Milestone2.pdf
-└── README.md
-
-
----
-
 ## Project Overview
 
 This project examines:
@@ -29,60 +14,6 @@ This project examines:
 
 The analysis was completed in Python using a Jupyter Notebook.  
 A cleaned dataset was also created to allow users to easily explore the data in Excel without running code.
-
----
-
-## Data Description
-
-### Raw Data
-- Historical wildfire records provided in the `fp-historical-wildfire-data-2000-*` files
-- Original data structure and field definitions are documented in:
-  - `fp-historical-wildfire-data-dictionary.xlsx`
-
-### Cleaned Data
-- **`FireData_CLEAN.xlsx`**
-  - Cleaned and standardized version of the wildfire dataset
-  - Created to:
-    - Remove inconsistencies
-    - Standardize variable formats
-    - Enable analysis in Excel if desired
-  - Used directly by the Python notebook
-
----
-
-## How to Run the Analysis
-
-### 1. Download the Repository
-- Click **Code → Download ZIP**
-- Extract the folder to your local machine
-- Keep the folder structure unchanged
-
----
-
-### 2. Open the Python Notebook
-
-The notebook:
-- Loads the cleaned wildfire data
-- Performs exploratory analysis
-- Examines wildfire status and burn rate trends
-- Generates visualizations and summary outputs
-
----
-
-### 3. Optional: Excel-Based Review
-
-If you prefer not to run Python:
-- Open `FireData_CLEAN.xlsx`
-- Explore, filter, or visualize the cleaned data directly in Excel
-
----
-
-## Presentation Deliverable
-
-- **`Milestone2.pdf`**
-  - Summarizes the analysis findings
-  - Includes key visualizations and interpretations
-  - Designed for non-technical stakeholders
 
 ---
 
@@ -96,28 +27,31 @@ If you prefer not to run Python:
 
 ---
 
-## Project Files & Materials
+## Access Files & Materials
 
-### 📓 Code & Analysis
-- [Exploratory Analysis Notebook (GitHub view)](
-https://github.com/SklutheCAD/DataAnalyticsProjectWork/blob/main/Alberta%20Wildfire/CodeFiles/Alberta_Wildfire.ipynb
-)
+### 📓 Code & Analysis Notebook
+Open in GitHub’s notebook viewer (renders output and plots):
 
-### 📂 Data Sources
-- [Cleaned Dataset – FireData_CLEAN.xlsx](Data/FireData_CLEAN.xlsx)
-- [Raw Historical Wildfire Data](Data/fp-historical-wildfire-data-2000.csv)
-- [Data Dictionary](Data/fp-historical-wildfire-data-dictionary.xlsx)
+👉 [Alberta_Wildfire.ipynb (Notebook)](https://github.com/SklutheCAD/DataAnalyticsProjectWork/blob/main/Alberta%20Wildfire/CodeFiles/Alberta_Wildfire.ipynb)
 
-### 📑 Presentation & Deliverables
-- [Milestone 2 Presentation (PDF)](Presentation/Milestone2.pdf)
+---
 
+### 📂 Data Files
+
+- 👉 [Cleaned Dataset — FireData_CLEAN.xlsx](Data/FireData_CLEAN.xlsx)
+- 👉 [Raw Historical Wildfire Data CSV](Data/fp-historical-wildfire-data-2000-*.csv)
+- 👉 [Data Dictionary](Data/fp-historical-wildfire-data-dictionary.xlsx)
+
+---
+
+### 📑 Presentation
+
+- 👉 [Milestone 2 Presentation (PDF)](Presentation/Milestone2.pdf)
+
+---
 
 ## Notes & Limitations
 
-- The analysis relies on the accuracy of the provided historical wildfire datasets
-- No assumptions were made beyond basic cleaning and transformation
-- Results are exploratory and intended for analytical insight, not operational forecasting
-
-
-Navigate to the `CodeFiles` folder and open:
-
+- The analysis relies on the accuracy of the provided historical wildfire data.
+- No assumptions were made beyond cleaning and basic transformation.
+- Results are exploratory in nature and intended for analytical insight, not operational forecasting.
