@@ -13,7 +13,8 @@ This repository contains a selection of my academic and personal data analytics 
 ### 🔥 Alberta Wildfire Analysis
 An exploratory and predictive analysis of Alberta wildfire data examining trends,
 seasonality, and contributing factors.
-➡️ [View Project](Alberta%20Wildfire/)
+➡️ [Alberta Wildfire Analysis](Alberta%20Wildfire/)
+
 
 ### 🚗 KIA / Hyundai Theft Analysis
 An analysis exploring patterns and contributing factors related to vehicle thefts,
