@@ -75,5 +75,4 @@ The script performs:
 
 ## Author
 Sam Kluthe
-Sam Kluthe
 
