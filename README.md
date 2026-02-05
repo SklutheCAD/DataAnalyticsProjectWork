@@ -10,8 +10,6 @@ I am particularly interested in roles where analytics supports strategic decisio
 ## Projects
 This repository contains a selection of my academic and personal data analytics projects. Each project includes documentation, analysis, and supporting code.
 
-## Projects
-
 ### 🔥 Alberta Wildfire Analysis
 An exploratory and predictive analysis of Alberta wildfire data examining trends,
 seasonality, and contributing factors.
