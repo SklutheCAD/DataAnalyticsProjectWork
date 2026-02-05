@@ -96,11 +96,20 @@ If you prefer not to run Python:
 
 ---
 
-## Project Files
+## Project Files & Materials
 
-- 📓 [Exploratory Analysis Notebook](Wildfire_EDA.ipynb)
-- 📊 [Cleaned Dataset](data/wildfire_clean.csv)
-- 📈 [Visual Outputs](outputs/)
+### 📓 Code & Analysis
+- [Exploratory Analysis Notebook (GitHub view)](
+https://github.com/SklutheCAD/DataAnalyticsProjectWork/blob/main/Alberta%20Wildfire/CodeFiles/Alberta_Wildfire.ipynb
+)
+
+### 📂 Data Sources
+- [Cleaned Dataset – FireData_CLEAN.xlsx](Data/FireData_CLEAN.xlsx)
+- [Raw Historical Wildfire Data](Data/fp-historical-wildfire-data-2000.csv)
+- [Data Dictionary](Data/fp-historical-wildfire-data-dictionary.xlsx)
+
+### 📑 Presentation & Deliverables
+- [Milestone 2 Presentation (PDF)](Presentation/Milestone2.pdf)
 
 
 ## Notes & Limitations
