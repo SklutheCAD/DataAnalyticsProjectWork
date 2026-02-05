@@ -10,12 +10,27 @@ I am particularly interested in roles where analytics supports strategic decisio
 ## Projects
 This repository contains a selection of my academic and personal data analytics projects. Each project includes documentation, analysis, and supporting code.
 
-Examples include:
-- Sports analytics projects examining performance trends and contributing factors to wins and losses
-- Data visualization dashboards built in Power BI to explore social and economic indicators
-- Exploratory data analysis projects using Python and pandas
+## Projects
 
-Detailed project descriptions and files can be found within the corresponding project folders.
+### 🔥 Alberta Wildfire Analysis
+An exploratory and predictive analysis of Alberta wildfire data examining trends,
+seasonality, and contributing factors.
+➡️ [View Project](Alberta%20Wildfire/)
+
+### 🚗 KIA / Hyundai Theft Analysis
+An analysis exploring patterns and contributing factors related to vehicle thefts,
+with a focus on KIA and Hyundai models.
+➡️ [View Project](KIA/)
+
+### 🎬 Netflix Top-10 Viewership Analysis
+An exploratory data analysis of Netflix Top-10 content to identify trends across
+countries, genres, and time.
+➡️ [View Project](Netflix/)
+
+### 🏛 White House Visitor Logs Analysis
+An analysis of White House visitor logs to explore visitation patterns, frequency,
+and notable trends.
+➡️ [View Project](WhiteHouseLogs/)
 
 ## Tools & Skills
 - Python (pandas, matplotlib, seaborn)
