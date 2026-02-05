@@ -24,7 +24,7 @@ with a focus on KIA and Hyundai models.
 ### 🎬 Netflix Top-10 Viewership Analysis
 An exploratory data analysis of Netflix Top-10 content to identify trends across
 countries, genres, and time.
-➡️ [View Project](Netflix/)
+➡️ [View Project](https://skluthecad.github.io/DataAnalyticsProjectWork/Netflix/)
 
 ### 🏛 White House Visitor Logs Analysis
 An analysis of White House visitor logs to explore visitation patterns, frequency,
