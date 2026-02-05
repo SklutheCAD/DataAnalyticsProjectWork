@@ -96,6 +96,13 @@ If you prefer not to run Python:
 
 ---
 
+## Project Files
+
+- 📓 [Exploratory Analysis Notebook](Wildfire_EDA.ipynb)
+- 📊 [Cleaned Dataset](data/wildfire_clean.csv)
+- 📈 [Visual Outputs](outputs/)
+
+
 ## Notes & Limitations
 
 - The analysis relies on the accuracy of the provided historical wildfire datasets
