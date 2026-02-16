@@ -24,6 +24,11 @@ The dataset used in this project includes complaint-level and aggregated informa
 - Complaint count
 - Geographic region and country indicators
 
+Due to file size limitations, the full subcategory dataset is not stored directly in this repository.
+
+Subcategory dataset can be accessed here:  
+[Complaints by Subcategory Dataset](https://content.bellevue.edu/cst/dsc/640/2024Update/Datasets/complaints-by-subcategory.csv)
+
 The data has been cleaned and structured for analysis, including date standardization, aggregation of complaint counts, and validation of categorical groupings.
 
 ---
