@@ -43,7 +43,8 @@ I work primarily with:
 - pandas  
 - matplotlib / seaborn  
 - Jupyter Notebook  
-- Power BI  
+- Power BI
+- Microsoft 365 applications
 
 I enjoy building end-to-end projects — from raw data ingestion to final presentation — with a focus on clarity, reproducibility, and storytelling.
 
