@@ -6,7 +6,6 @@ patterns in team performance across a season. The goal is to identify trends and
 contextual factors that may contribute to wins and losses, and to demonstrate how
 sports analytics can support strategic decision-making in professional hockey.
 
-⚠️ **Project Status:** This analysis is currently in progress and under active development.
 
 ## Business Problem
 Professional sports organizations rely heavily on data to evaluate performance, guide
