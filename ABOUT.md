@@ -61,3 +61,11 @@ Together, they shape how I think: practical, analytical, and solution-focused.
 If you’re here to explore my work, head over to the Work section to see the projects I’ve built.
 
 Thanks for visiting.
+
+## Contact
+
+While I am not actively seeking new opportunities, I welcome professional discussion and thoughtful collaboration.
+
+The best way to connect with me is directly through GitHub:
+
+👉 [github.com/SklutheCAD](https://github.com/SklutheCAD)
