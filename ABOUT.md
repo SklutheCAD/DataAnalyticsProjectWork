@@ -11,7 +11,7 @@ By day (and often late at night), I’m a data analyst and problem solver. By mo
 
 ## Life on the Farm
 
-I run a small hobby farm where early mornings don’t start with emails — they start with animals. Caring for livestock, managing feed, maintaining coops and fencing, and adapting to weather conditions has taught me something powerful:
+I run a small hobby farm where early mornings don’t start with emails — they start with animals. Caring for birds, managing feed, maintaining coops and fencing, and adapting to weather conditions has taught me something powerful:
 
 Systems matter.
 
