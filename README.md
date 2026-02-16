@@ -31,7 +31,7 @@ An analysis of White House visitor logs to explore visitation patterns, frequenc
 and notable trends.
 ➡️ [View Project](WhiteHouseLogs/)
 
-### 🏒 Edmonton Oilers Performance Analysis *(In Progress)*
+### 🏒 Edmonton Oilers Performance Analysis 
 An ongoing analysis of game-level performance data for the Edmonton Oilers exploring
 patterns in wins and losses, opponent strength, and contextual factors such as home
 and away performance.
